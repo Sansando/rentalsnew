@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bike Rental</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Background Styling */
+        body {
+            background: url('https://images.unsplash.com/photo-1558981806-ec527fa84c39') no-repeat center center fixed;
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Header Styling */
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 3px 10px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 1px 5px rgba(255, 87, 34, 0.3);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+            box-sizing: border-box;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            padding: 2px 6px;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover {
+            background: rgba(255, 87, 34, 0.1);
+        }
+
+        .logo-icon {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #ff5722, #e64a19);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 1px 5px rgba(255, 87, 34, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo-icon::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% {
+                transform: translateX(-100%) rotate(45deg);
+            }
+            100% {
+                transform: translateX(100%) rotate(45deg);
+            }
+        }
+
+        .logo:hover .logo-icon {
+            transform: rotate(360deg) scale(1.1);
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 800;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .logo-text span {
+            color: #ff5722;
+            background: linear-gradient(135deg, #ff5722, #e64a19);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+            position: relative;
+        }
+
+        .logo-text span::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #ff5722, transparent);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover .logo-text span::after {
+            transform: scaleX(1);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 12px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 87, 34, 0.2);
+            color: #ff5722;
+        }
+
+        .nav-links .active {
+            background: #ff5722;
+            color: white;
+        }
+
+        .animated-header {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: white;
+            margin: 0;
+            text-align: center;
+        }
+
+        /* Container Styling */
+        .container {
+            max-width: 900px;
+            margin: 120px auto 20px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.85);
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.3);
+            animation: fadeInUp 1.5s ease-in-out;
+            width: 90%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            margin-bottom: 100px;
+        }
+
+        .container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2em;
+            color: #ff5722;
+        }
+
+        /* Scrollable Area */
+        .bike-list {
+            max-height: 500px;
+            overflow-y: auto;
+            padding: 10px;
+            border-radius: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: #ff5722 #333;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Custom Scrollbar */
+        .bike-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .bike-list::-webkit-scrollbar-track {
+            background: #333;
+            border-radius: 10px;
+        }
+
+        .bike-list::-webkit-scrollbar-thumb {
+            background: #ff5722;
+            border-radius: 10px;
+        }
+
+        /* Bike Option Cards */
+        .option {
+            background: rgba(255, 255, 255, 0.95);
+            color: black;
+            padding: 15px;
+            margin: 15px auto;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            width: 90%;
+            max-width: 800px;
+        }
+
+        .option:hover {
+            transform: scale(1.03);
+            box-shadow: 0 6px 12px rgba(255, 87, 34, 0.4);
+        }
+
+        .option img {
+            width: 130px;
+            height: auto;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .option img:hover {
+            transform: scale(1.1);
+        }
+
+        .option p {
+            flex: 1;
+            text-align: center;
+            margin: 0 20px;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        /* Buttons */
+        button {
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: background 0.3s ease, transform 0.2s ease;
+            margin: 10px auto;
+            display: block;
+        }
+
+        button:hover {
+            background-color: #e64a19;
+            transform: scale(1.05);
+        }
+
+        /* Footer */
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px 10px 0 0;
+            box-sizing: border-box;
+            text-align: center;
+            z-index: 99;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Modal Styling */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+        }
+
+        .modal.show {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            position: relative;
+            background-color: white;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 15px;
+            color: black;
+            animation: slideIn 0.3s ease-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .close {
+            position: absolute;
+            right: 15px;
+            top: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .form-group {
+            margin: 15px 0;
+            text-align: center;
+            width: 100%;
+        }
+
+        .form-group input {
+            width: 80%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            margin: 0 auto;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .modal-buttons button {
+            width: 45%;
+            margin: 0;
+        }
+
+        .cancel-btn {
+            background-color: #666 !important;
+        }
+
+        .bike-details {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+            width: 100%;
+        }
+
+        .bike-details img {
+            width: 200px;
+            height: auto;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+
+        .bike-info {
+            text-align: center;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header class="header-container">
+        <a href="index.html" class="logo">
+            <div class="logo-icon">D</div>
+            <div class="logo-text">Drive<span>Now</span></div>
+        </a>
+        <nav class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+            <a href="login.html">Login</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h2>Available Bikes</h2>
+
+        <div class="bike-list">
+            <div class="option">
+                <img src="https://tse2.mm.bing.net/th?id=OIP.4DGL_0Yr_Sc5dfcqqzARUgHaEK&pid=Api&P=0&h=180" alt="Yamaha R15">
+                <p>Yamaha R15 - ₹1,000/day</p>
+                <button onclick="openModal('Yamaha R15', 1000, this.parentElement.querySelector('img').src)">Rent Now</button>
+            </div>
+            
+            <div class="option">
+                <img src="https://tse1.mm.bing.net/th?id=OIP.T1h8CcIfvgZQ_P5xELOTywHaHa&pid=Api&P=0&h=180" alt="Royal Enfield Classic 350">
+                <p>Royal Enfield Classic 350 - ₹1,200/day</p>
+                <button onclick="openModal('Royal Enfield Classic 350', 1200, this.parentElement.querySelector('img').src)">Rent Now</button>
+            </div>
+
+            <div class="option">
+                <img src="https://tse3.mm.bing.net/th?id=OIP.b8VZr3UpFYehU-uOMmqZPQHaEH&pid=Api&P=0&h=180" alt="Bajaj Pulsar 220F">
+                <p>Bajaj Pulsar 220F - ₹900/day</p>
+                <button onclick="openModal('Bajaj Pulsar 220F', 900, this.parentElement.querySelector('img').src)">Rent Now</button>
+            </div>
+
+            <div class="option">
+                <img src="https://tse3.mm.bing.net/th?id=OIP.b8VZr3UpFYehU-uOMmqZPQHaEH&pid=Api&P=0&h=180" alt="Honda Activa 125">
+                <p>Honda Activa 125 - ₹600/day</p>
+                <button onclick="openModal('Honda Activa 125', 600, this.parentElement.querySelector('img').src)">Rent Now</button>
+            </div>
+
+            <div class="option">
+                <img src="https://tse1.mm.bing.net/th?id=OIP.4DGL_0Yr_Sc5dfcqqzARUgHaEK&pid=Api&P=0&h=180" alt="TVS Apache RTR 160">
+                <p>TVS Apache RTR 160 - ₹950/day</p>
+                <button onclick="openModal('TVS Apache RTR 160', 950, this.parentElement.querySelector('img').src)">Rent Now</button>
+            </div>
+
+            <div class="option">
+                <img src="https://tse3.mm.bing.net/th?id=OIP.MeNvKsV6FKLz9CjuU8mRjwHaFj&pid=Api&P=0&h=18" alt="KTM Duke 200">
+                <p>KTM Duke 200 - ₹1,400/day</p>
+                <button onclick="openModal('KTM Duke 200', 1400, this.parentElement.querySelector('img').src)">Rent Now</button>
+            </div>
+
+            <div class="option">
+                <img src="https://tse4.mm.bing.net/th?id=OIP.Ahp2PHChbSnzM_eqWnkBzAHaE7&pid=Api&P=0&h=180" alt="Harley Davidson Street 750">
+                <p>Harley Davidson Street 750 - ₹2,500/day</p>
+                <button onclick="openModal('Harley Davidson Street 750', 2500, this.parentElement.querySelector('img').src)">Rent Now</button>
+            </div>
+
+            <div class="option">
+                <img src="https://tse4.mm.bing.net/th?id=OIP.EqR63G4b5ZKDonalAsbuUQHaE8&pid=Api&P=0&h=180" alt="BMW G310R">
+                <p>BMW G310R - ₹1,800/day</p>
+                <button onclick="openModal('BMW G310R', 1800, this.parentElement.querySelector('img').src)">Rent Now</button>
+            </div>
+        </div>
+
+        <button onclick="window.location.href='index.html'">Back to Home</button>
+    </div>
+
+    <!-- Rental Confirmation Modal -->
+    <div id="rentalModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Rental Confirmation</h2>
+            
+            <div class="bike-details">
+                <img id="modalBikeImage" src="" alt="Bike">
+                <div class="bike-info">
+                    <h3 id="modalBikeName"></h3>
+                    <p id="modalBikePrice"></p>
+                </div>
+            </div>
+
+            <form id="rentalForm" onsubmit="submitRental(event)">
+                <div class="form-group">
+                    <label for="pickupLocation">Pickup Location:</label>
+                    <input type="text" id="pickupLocation" required placeholder="Enter pickup location">
+                </div>
+
+                <div class="form-group">
+                    <label for="dropLocation">Drop Location:</label>
+                    <input type="text" id="dropLocation" required placeholder="Enter drop location">
+                </div>
+
+                <div class="form-group">
+                    <label for="rentalDays">Number of Days:</label>
+                    <input type="number" id="rentalDays" required min="1" max="30" value="1">
+                </div>
+
+                <div class="form-group">
+                    <label>Total Amount:</label>
+                    <p id="totalAmount" style="font-size: 1.2em; font-weight: bold;"></p>
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="button" class="cancel-btn" onclick="closeModal()">Cancel</button>
+                    <button type="submit">Confirm Rental</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>&copy; 2025 Bike Rental Platform</footer>
+
+    <script>
+        let currentBikePrice = 0;
+
+        function openModal(bikeName, pricePerDay, imageUrl) {
+            const modal = document.getElementById('rentalModal');
+            const bikePriceElem = document.getElementById('modalBikePrice');
+            const bikeNameElem = document.getElementById('modalBikeName');
+            const bikeImageElem = document.getElementById('modalBikeImage');
+            
+            currentBikePrice = pricePerDay;
+            bikeNameElem.textContent = bikeName;
+            bikePriceElem.textContent = `₹${pricePerDay}/day`;
+            bikeImageElem.src = imageUrl;
+            
+            modal.classList.add('show');
+            updateTotalAmount();
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('rentalModal');
+            modal.classList.remove('show');
+            document.getElementById('rentalForm').reset();
+        }
+
+        function updateTotalAmount() {
+            const days = document.getElementById('rentalDays').value;
+            const total = currentBikePrice * days;
+            document.getElementById('totalAmount').textContent = `₹${total}`;
+        }
+
+        document.getElementById('rentalDays').addEventListener('input', updateTotalAmount);
+
+        function submitRental(event) {
+            event.preventDefault();
+
+            const formData = {
+                bikeName: document.getElementById('modalBikeName').textContent,
+                pickupLocation: document.getElementById('pickupLocation').value,
+                dropLocation: document.getElementById('dropLocation').value,
+                days: document.getElementById('rentalDays').value,
+                totalAmount: document.getElementById('totalAmount').textContent
+            };
+
+            // Redirect to payment page with booking details
+            const params = new URLSearchParams({
+                bike: formData.bikeName,
+                duration: `${formData.days} days`,
+                pickup: formData.pickupLocation,
+                drop: formData.dropLocation,
+                amount: formData.totalAmount
+            });
+            
+            window.location.href = `payment.html?${params.toString()}`;
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - Vehicle Rental</title>
+    <style>
+        body {
+            background: url('https://img.freepik.com/premium-vector/credit-card-black-background-realistic-bank-card-layout_166116-5931.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .payment-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 500px;
+            margin: 20px auto;
+            color: #333;
+        }
+
+        .booking-summary {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .booking-summary h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .payment-form {
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        input:focus {
+            border-color: #ff5722;
+            outline: none;
+            box-shadow: 0 0 5px rgba(255, 87, 34, 0.2);
+        }
+
+        .card-details {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 15px;
+        }
+
+        button {
+            background-color: #ff5722;
+            color: white;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #f4511e;
+        }
+
+        .back-button {
+            background-color: #666;
+            margin-top: 10px;
+        }
+
+        .back-button:hover {
+            background-color: #555;
+        }
+
+        .payment-header {
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .payment-container {
+            animation: fadeIn 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-header">
+        <h1>Complete Your Payment</h1>
+    </div>
+
+    <div class="payment-container">
+        <div class="booking-summary">
+            <h3>Booking Summary</h3>
+            <div class="summary-item">
+                <span>Vehicle:</span>
+                <span id="summaryVehicle"></span>
+            </div>
+            <div class="summary-item">
+                <span>Vehicle Type:</span>
+                <span id="summaryVehicleType"></span>
+            </div>
+            <div class="summary-item">
+                <span>Duration:</span>
+                <span id="summaryDuration"></span>
+            </div>
+            <div class="summary-item">
+                <span>Pickup Location:</span>
+                <span id="summaryPickup"></span>
+            </div>
+            <div class="summary-item">
+                <span>Drop Location:</span>
+                <span id="summaryDrop"></span>
+            </div>
+            <div class="summary-item">
+                <span>Total Amount:</span>
+                <span id="summaryAmount" style="font-weight: bold; color: #ff5722"></span>
+            </div>
+        </div>
+
+        <form class="payment-form" id="paymentForm" onsubmit="processPayment(event)">
+            <div class="form-group">
+                <label for="cardName">Cardholder Name</label>
+                <input type="text" id="cardName" required placeholder="Enter cardholder's name">
+            </div>
+
+            <div class="form-group">
+                <label for="cardNumber">Card Number</label>
+                <input type="text" id="cardNumber" required placeholder="1234 5678 9012 3456" 
+                       maxlength="19" oninput="formatCardNumber(this)">
+            </div>
+
+            <div class="card-details">
+                <div class="form-group">
+                    <label for="expiryDate">Expiry Date</label>
+                    <input type="text" id="expiryDate" required placeholder="MM/YY" 
+                           maxlength="5" oninput="formatExpiryDate(this)">
+                </div>
+
+                <div class="form-group">
+                    <label for="cvv">CVV</label>
+                    <input type="password" id="cvv" required placeholder="123" 
+                           maxlength="3" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                </div>
+            </div>
+
+            <button type="submit">Pay Now</button>
+            <button type="button" class="back-button" onclick="window.location.href='bike.html'">Back to Bikes</button>
+        </form>
+    </div>
+
+    <script>
+        // Populate booking summary from URL parameters
+        window.onload = function() {
+            const params = new URLSearchParams(window.location.search);
+            document.getElementById('summaryVehicle').textContent = params.get('vehicle') || '';
+            document.getElementById('summaryVehicleType').textContent = params.get('type') || '';
+            document.getElementById('summaryDuration').textContent = params.get('duration') || '';
+            document.getElementById('summaryPickup').textContent = params.get('pickup') || '';
+            document.getElementById('summaryDrop').textContent = params.get('drop') || '';
+            document.getElementById('summaryAmount').textContent = params.get('amount') || '';
+        }
+
+        // Format card number with spaces
+        function formatCardNumber(input) {
+            let value = input.value.replace(/\s/g, '').replace(/[^0-9]/g, '');
+            let formattedValue = '';
+            for(let i = 0; i < value.length; i++) {
+                if(i > 0 && i % 4 === 0) {
+                    formattedValue += ' ';
+                }
+                formattedValue += value[i];
+            }
+            input.value = formattedValue;
+        }
+
+        // Format expiry date
+        function formatExpiryDate(input) {
+            let value = input.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.slice(0,2) + '/' + value.slice(2);
+            }
+            input.value = value;
+        }
+
+        // Process payment
+        function processPayment(event) {
+            event.preventDefault();
+            // In a real application, you would handle payment processing here
+            alert('Payment processed successfully! Your rental has been confirmed.');
+            // Redirect based on vehicle type
+            const params = new URLSearchParams(window.location.search);
+            const vehicleType = params.get('type').toLowerCase();
+            window.location.href = `${vehicleType}.html`; // Redirects to either car.html or bike.html
+        }
+    </script>
+</body>
+</html>
